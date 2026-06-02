@@ -43,7 +43,7 @@ app.use((err, req, res, next) => {
 // ── Boot ──────────────────────────────────────────────────────────────────────
 async function start() {
   await initDB();
-  app.listen(PORT, () => {
+  app.listen(PORT,'0.0.0.0', () => {
     console.log(`\n URL Shortener running on http://localhost:${PORT}`);
     console.log(` Frontend:  http://localhost:${PORT}`);
     console.log(` Health:    GET  /health`);
