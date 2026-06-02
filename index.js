@@ -19,14 +19,23 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 
+// // ── Serve frontend ────────────────────────────────────────────────────────────
+// app.use(express.static(path.join(__dirname, 'public')));
+
+// // ── API routes ────────────────────────────────────────────────────────────────
+// app.use('/api', apiRoutes);
+
+// // ── Health check ──────────────────────────────────────────────────────────────
+// app.get('/health', (req, res) => res.json({ status: 'ok', ts: new Date() }));
+
+// ── Health check ──────────────────────────────────────────────────────────────
+app.get('/health', (req, res) => res.json({ status: 'ok', ts: new Date() }));
+
 // ── Serve frontend ────────────────────────────────────────────────────────────
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ── API routes ────────────────────────────────────────────────────────────────
 app.use('/api', apiRoutes);
-
-// ── Health check ──────────────────────────────────────────────────────────────
-app.get('/health', (req, res) => res.json({ status: 'ok', ts: new Date() }));
 
 // ── Redirect — must be last (catches /:code) ──────────────────────────────────
 app.get('/:code', redirectLimiter, redirectUrl);
