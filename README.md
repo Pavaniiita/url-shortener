@@ -142,30 +142,4 @@ using the same `get(key)` / `set(key, value, ttl)` / `del(key)` interface.
 
 ---
 
-## Interview talking points
 
-### How do you generate the short code?
-We use `crypto.randomBytes()` mapped to a Base62 alphabet `[0-9a-zA-Z]`.
-7 characters = 62⁷ ≈ 3.5 trillion unique codes. Collision is checked before
-inserting — if a collision occurs (extremely rare), we retry up to 5 times.
-
-### Why 302 and not 301?
-`302 Temporary` makes the browser request our server on every visit, so we
-can count every click. `301 Permanent` is cached by the browser forever —
-faster but invisible to analytics. We use 302 by default.
-
-### How would you scale this?
-App servers are stateless — scale horizontally behind a load balancer.
-Replace the in-memory cache with a Redis cluster shared across all instances.
-Add a read replica for analytics queries so they don't hit the primary DB.
-For extreme scale, add a CDN that caches the redirect at the edge.
-
-### How does rate limiting work here?
-Sliding window per IP — we track request timestamps in a rolling 60-second
-window. If requests ≥ limit, return 429. In production, this state lives in
-Redis so all app servers share the same counters.
-
-### What happens when a link expires?
-`expires_at` is stored in the DB. On every redirect, we check it. The cache
-entry also has a TTL matching the expiry, so expired links auto-evict.
-A background cron job (easy to add) can hard-delete expired rows nightly.
